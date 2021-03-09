@@ -201,11 +201,13 @@ jobs:
           Start-Process powershell -Verb runAs -ArgumentList $arguments
           Break
         }
+        az --version
+        ls $env:SYSTEM_ARTIFACTSDIRECTORY/msi
         $InstallArgs = @(
-          "/I"
+          "/i"
           '"$env:SYSTEM_ARTIFACTSDIRECTORY/msi/Microsoft Azure CLI.msi"'
           "/norestart"
-          "/L*v"
+          "/l*v"
           ".\install_logs.txt"
         )
         Start-Process "msiexec.exe" -ArgumentList $InstallArgs -Wait -NoNewWindow
