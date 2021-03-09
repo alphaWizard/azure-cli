@@ -180,8 +180,7 @@ jobs:
   displayName: Test Windows MSI
 
   dependsOn: BuildWindowsMSI
-  # condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'Manual'))
-  condition: false
+  condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'Manual'))
   pool:
     vmImage: 'vs2017-win2016'
   steps:
@@ -196,6 +195,12 @@ jobs:
     inputs:
       targetType: inline
       script: |
+        if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+        {  
+          $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+          Start-Process powershell -Verb runAs -ArgumentList $arguments
+          Break
+        }
         $InstallArgs = @(
           "/I"
           '"$env:SYSTEM_ARTIFACTSDIRECTORY/msi/Microsoft Azure CLI.msi"'
